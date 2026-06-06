@@ -160,6 +160,7 @@ body {
   justify-content: space-between;
   height: 52px;
   padding: 0 16px;
+  overflow: hidden;
 }
 .nav-who {
   font-family: 'DM Mono', monospace;
@@ -201,8 +202,10 @@ body {
   background: var(--orange);
   position: relative;
   overflow: hidden;
-  padding: 36px 24px 28px;
+  padding: 36px 16px 28px;
   text-align: center;
+  width: 100%;
+  max-width: 100%;
 }
 .hero-name {
   font-family: 'DM Mono', monospace;
@@ -300,9 +303,9 @@ body {
 .panel.active { display: block; }
 
 /* FORM */
-.form-wrap { max-width: 680px; margin: 0 auto; padding: 40px 20px 220px; }
+.form-wrap { max-width: 680px; margin: 0 auto; padding: 40px 16px 220px; width: 100%; }
 
-.section-block { margin-bottom: 48px; }
+.section-block { margin-bottom: 48px; width: 100%; max-width: 100%; overflow: hidden; }
 .section-head { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
 .section-num {
   width: 40px; height: 40px; border-radius: 50%;
@@ -314,12 +317,13 @@ body {
 .section-sub { font-size: 12px; color: var(--muted); font-style: italic; margin-top: 2px; }
 .section-rule { height: 1px; background: linear-gradient(to right, var(--orange), var(--rule), transparent); margin-bottom: 24px; }
 
-.q-block { margin-bottom: 28px; }
+.q-block { margin-bottom: 28px; width: 100%; max-width: 100%; }
 .q-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--orange); margin-bottom: 6px; }
 .q-text { font-family: 'Playfair Display', serif; font-size: 18px; line-height: 1.4; color: var(--ink); margin-bottom: 10px; }
 
 textarea {
   width: 100%;
+  max-width: 100%;
   background: var(--warm);
   border: 1.5px solid var(--rule);
   border-radius: 6px;
@@ -338,25 +342,27 @@ textarea:focus { border-color: var(--orange); background: #fff; }
 textarea::placeholder { color: var(--muted); opacity: .5; font-style: italic; }
 
 /* SCALE */
-.scale { display: grid; grid-template-columns: repeat(10, 1fr); border: 1.5px solid var(--rule); border-radius: 6px; overflow: hidden; background: var(--warm); }
+.scale { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); border: 1.5px solid var(--rule); border-radius: 6px; overflow: hidden; background: var(--warm); width: 100%; }
 .scale input { display: none; }
 .scale label {
-  padding: 13px 4px;
+  padding: 12px 2px;
   text-align: center;
   font-family: 'Playfair Display', serif;
-  font-size: 15px;
+  font-size: 14px;
   color: var(--muted);
   cursor: pointer;
   border-right: 1px solid var(--rule);
   transition: background .12s, color .12s;
   -webkit-tap-highlight-color: transparent;
+  min-width: 0;
+  overflow: hidden;
 }
 .scale label:last-of-type { border-right: none; }
 .scale input:checked + label { background: var(--orange); color: #fff; }
 .scale-ends { display: flex; justify-content: space-between; margin-top: 5px; font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; }
 
 /* CHIPS */
-.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; }
 .chips input { display: none; }
 .chip {
   padding: 8px 16px;
@@ -434,7 +440,7 @@ textarea::placeholder { color: var(--muted); opacity: .5; font-style: italic; }
 .save-bar-draft:active { border-color: rgba(253,248,242,.4); color: rgba(253,248,242,.9); }
 
 /* HISTORY */
-.panel-wrap { max-width: 680px; margin: 0 auto; padding: 36px 20px 60px; }
+.panel-wrap { max-width: 680px; margin: 0 auto; padding: 36px 16px 60px; width: 100%; }
 .panel-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; margin-bottom: 4px; }
 .panel-sub { font-size: 13px; color: var(--muted); font-style: italic; margin-bottom: 32px; }
 
@@ -531,7 +537,7 @@ textarea::placeholder { color: var(--muted); opacity: .5; font-style: italic; }
 }
 .modal-section-label::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
 
-.score-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.score-row { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; width: 100%; }
 .score-card { background: var(--warm); border: 1.5px solid var(--rule); border-radius: 6px; padding: 14px; text-align: center; }
 .score-card .sn { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 900; line-height: 1; }
 .score-card .sl { font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-top: 5px; }
@@ -600,9 +606,11 @@ textarea::placeholder { color: var(--muted); opacity: .5; font-style: italic; }
 .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(10px); background: var(--forest); color: #fff; padding: 11px 20px; border-radius: 100px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; opacity: 0; transition: all .3s; pointer-events: none; z-index: 999; white-space: nowrap; }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .person-grid, .love-notes, .hcard-entries { grid-template-columns: 1fr; }
-  .score-row { grid-template-columns: repeat(2, 1fr); }
+  .score-row { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .hcard-status { flex-direction: column; gap: 4px; }
+  .hero-checkin-label span { font-size: 10px; letter-spacing: 1px; }
 }
 </style>
 </head>
@@ -660,7 +668,7 @@ textarea::placeholder { color: var(--muted); opacity: .5; font-style: italic; }
   <div class="hero">
     <div class="hero-name" id="hero-name">Sophia</div>
     <div class="hero-title">Sophia <em>&</em> Rory</div>
-    <div style="display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;">
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;max-width:100%;padding:0 8px;">
       <div class="hero-checkin-label" onclick="openLabelSheet()">
         <span id="label-display">June 2026</span>
         <span class="edit-icon">✏</span>
