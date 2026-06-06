@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="S & R">
+<meta name="theme-color" content="#E8622A">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Sophia & Rory</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { overflow-x: hidden; width: 100%; }
+
+:root {
+  --orange: #E8622A;
+  --orange-dark: #C44E1E;
+  --cream: #FDF8F2;
+  --warm: #F5EDE0;
+  --ink: #1C1208;
+  --muted: #9A8070;
+  --rule: #E2D4C0;
+  --cobalt: #2A4A8C;
+  --forest: #2A5C3A;
+  --gold: #C49A30;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ─── SCREEN 1: PICKER ─── */
+#screen-picker {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--ink);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 32px 60px;
+  gap: 0;
+}
+#screen-picker.hidden { display: none; }
+
+.picker-wordmark {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: rgba(253,248,242,.3);
+  margin-bottom: 40px;
+}
+.picker-wordmark em { color: var(--orange); font-style: normal; }
+
+.picker-feather { font-size: 32px; margin-bottom: 14px; animation: bob 3s ease-in-out infinite; }
+@keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+.picker-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 9vw, 64px);
+  font-weight: 900;
+  color: var(--cream);
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  line-height: 0.95;
+  text-align: center;
+  margin-bottom: 8px;
+}
+.picker-title em { color: var(--orange); font-style: italic; font-weight: 400; }
+
+.picker-sub {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 15px;
+  color: rgba(253,248,242,.4);
+  margin-bottom: 52px;
+}
+
+.picker-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 340px;
+}
+
+.picker-card {
+  display: block;
+  width: 100%;
+  padding: 24px 28px;
+  border-radius: 8px;
+  text-decoration: none;
+  text-align: left;
+  border: 1.5px solid rgba(255,255,255,.1);
+  background: rgba(255,255,255,.04);
+  transition: background .15s, border-color .15s, transform .15s;
+  -webkit-tap-highlight-color: rgba(232,98,42,.2);
+}
+.picker-card:active { transform: scale(0.98); background: rgba(255,255,255,.08); }
+.picker-card.sophia { border-color: rgba(232,98,42,.5); }
+.picker-card.rory   { border-color: rgba(42,74,140,.5); }
+
+.picker-card-inner { display: flex; align-items: center; gap: 16px; }
+.picker-card-emoji { font-size: 32px; flex-shrink: 0; }
+.picker-card-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 3px;
+}
+.picker-card.sophia .picker-card-name { color: #F5895A; }
+.picker-card.rory   .picker-card-name { color: #7A9FD4; }
+.picker-card-role {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(253,248,242,.3);
+}
+.picker-card-arrow {
+  margin-left: auto;
+  color: rgba(253,248,242,.2);
+  font-size: 18px;
+}
+
+.picker-quote {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 11px;
+  color: rgba(253,248,242,.18);
+  text-align: center;
+  max-width: 300px;
+  line-height: 1.8;
+  margin-top: 40px;
+}
+
+/* ─── SCREEN 2: APP ─── */
+#screen-app { display: none; }
+#screen-app.visible { display: block; }
+
+/* NAV */
+.nav {
+  background: var(--ink);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding-top: env(safe-area-inset-top);
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  padding: 0 16px;
+}
+.nav-who {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--orange);
+  background: none;
+  border: 1px solid rgba(232,98,42,.3);
+  border-radius: 100px;
+  padding: 5px 12px;
+  cursor: pointer;
+  color: var(--orange);
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-who.rory-mode { color: #7A9FD4; border-color: rgba(122,159,212,.3); }
+.nav-tabs { display: flex; }
+.nav-tab {
+  height: 52px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(253,248,242,.35);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color .2s, border-color .2s;
+}
+.nav-tab.active { color: var(--orange); border-bottom-color: var(--orange); }
+
+/* HERO */
+.hero {
+  background: var(--orange);
+  position: relative;
+  overflow: hidden;
+  padding: 36px 24px 28px;
+  text-align: center;
+}
+.hero-name {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: rgba(253,248,242,.6);
+  margin-bottom: 6px;
+}
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(28px, 7vw, 52px);
+  font-weight: 900;
+  color: var(--cream);
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.hero-title em { font-style: italic; font-weight: 400; }
+.hero-checkin-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(28,18,8,.25);
+  border: 1px solid rgba(253,248,242,.2);
+  border-radius: 100px;
+  padding: 7px 16px;
+  margin-top: 14px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.hero-checkin-label span {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--cream);
+  text-transform: uppercase;
+}
+.hero-checkin-label .edit-icon { color: rgba(253,248,242,.5); font-size: 12px; }
+.hero-new-btn {
+  display: inline-block;
+  margin-top: 10px;
+  margin-left: 8px;
+  background: rgba(28,18,8,.3);
+  border: 1px solid rgba(253,248,242,.2);
+  border-radius: 100px;
+  padding: 7px 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: rgba(253,248,242,.7);
+  cursor: pointer;
+  text-transform: uppercase;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* PROGRESS BAR */
+.progress-bar-wrap {
+  background: rgba(28,18,8,.2);
+  padding: 8px 24px;
+}
+.progress-bar-track {
+  height: 2px;
+  background: rgba(253,248,242,.15);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: rgba(253,248,242,.7);
+  border-radius: 2px;
+  width: 0%;
+  transition: width .4s ease;
+}
+
+/* QUOTE */
+.quote-strip {
+  background: var(--ink);
+  padding: 24px 28px;
+  text-align: center;
+}
+.quote-strip p {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: clamp(12px, 2vw, 16px);
+  color: rgba(253,248,242,.35);
+  line-height: 1.7;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* PANELS */
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* FORM */
+.form-wrap { max-width: 680px; margin: 0 auto; padding: 40px 20px 220px; }
+
+.section-block { margin-bottom: 48px; }
+.section-head { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.section-num {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--orange); color: var(--cream);
+  font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.section-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; }
+.section-sub { font-size: 12px; color: var(--muted); font-style: italic; margin-top: 2px; }
+.section-rule { height: 1px; background: linear-gradient(to right, var(--orange), var(--rule), transparent); margin-bottom: 24px; }
+
+.q-block { margin-bottom: 28px; }
+.q-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--orange); margin-bottom: 6px; }
+.q-text { font-family: 'Playfair Display', serif; font-size: 18px; line-height: 1.4; color: var(--ink); margin-bottom: 10px; }
+
+textarea {
+  width: 100%;
+  background: var(--warm);
+  border: 1.5px solid var(--rule);
+  border-radius: 6px;
+  padding: 14px 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  color: var(--ink);
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 90px;
+  outline: none;
+  transition: border-color .2s;
+  -webkit-appearance: none;
+}
+textarea:focus { border-color: var(--orange); background: #fff; }
+textarea::placeholder { color: var(--muted); opacity: .5; font-style: italic; }
+
+/* SCALE */
+.scale { display: grid; grid-template-columns: repeat(10, 1fr); border: 1.5px solid var(--rule); border-radius: 6px; overflow: hidden; background: var(--warm); }
+.scale input { display: none; }
+.scale label {
+  padding: 13px 4px;
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  color: var(--muted);
+  cursor: pointer;
+  border-right: 1px solid var(--rule);
+  transition: background .12s, color .12s;
+  -webkit-tap-highlight-color: transparent;
+}
+.scale label:last-of-type { border-right: none; }
+.scale input:checked + label { background: var(--orange); color: #fff; }
+.scale-ends { display: flex; justify-content: space-between; margin-top: 5px; font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; }
+
+/* CHIPS */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips input { display: none; }
+.chip {
+  padding: 8px 16px;
+  border: 1.5px solid var(--rule);
+  border-radius: 100px;
+  font-size: 13px;
+  color: var(--muted);
+  background: var(--warm);
+  cursor: pointer;
+  transition: all .15s;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.chips input:checked + .chip { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+
+/* CLOSING CARD */
+.closing-card {
+  background: var(--ink);
+  border-radius: 8px;
+  padding: 32px 28px;
+  text-align: center;
+}
+.closing-card p {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 15px;
+  color: rgba(253,248,242,.35);
+  line-height: 1.7;
+}
+
+/* SAVE BAR */
+.save-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--ink);
+  border-top: 2px solid rgba(232,98,42,.35);
+  padding: 16px 20px;
+  padding-bottom: max(20px, env(safe-area-inset-bottom));
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 200;
+}
+.save-bar.visible { display: flex; }
+.save-bar-complete {
+  width: 100%;
+  padding: 18px;
+  background: var(--orange);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background .15s;
+}
+.save-bar-complete:active { background: var(--orange-dark); }
+.save-bar-complete.done { background: var(--forest); }
+.save-bar-draft {
+  width: 100%;
+  padding: 16px;
+  background: transparent;
+  color: rgba(253,248,242,.6);
+  border: 1.5px solid rgba(253,248,242,.15);
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color .15s, color .15s;
+}
+.save-bar-draft:active { border-color: rgba(253,248,242,.4); color: rgba(253,248,242,.9); }
+
+/* HISTORY */
+.panel-wrap { max-width: 680px; margin: 0 auto; padding: 36px 20px 60px; }
+.panel-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+.panel-sub { font-size: 13px; color: var(--muted); font-style: italic; margin-bottom: 32px; }
+
+.empty-state { text-align: center; padding: 60px 24px; background: var(--warm); border: 2px dashed var(--rule); border-radius: 8px; }
+.empty-state .es-icon { font-size: 40px; margin-bottom: 14px; }
+.empty-state h3 { font-family: 'Playfair Display', serif; font-size: 20px; margin-bottom: 6px; }
+.empty-state p { font-size: 13px; color: var(--muted); font-style: italic; }
+
+.history-list { display: flex; flex-direction: column; gap: 16px; }
+
+/* REPORT TEASER */
+.report-teaser {
+  background: var(--ink);
+  border: 1.5px solid var(--orange);
+  border-radius: 8px;
+  padding: 22px 24px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity .15s;
+  margin-bottom: 4px;
+}
+.report-teaser:active { opacity: .85; }
+.rt-eyebrow { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--orange); margin-bottom: 6px; }
+.rt-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--cream); margin-bottom: 3px; }
+.rt-sub { font-size: 13px; color: rgba(253,248,242,.4); font-style: italic; }
+.rt-row { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; }
+.rt-cta {
+  background: var(--orange); color: #fff; border: none; border-radius: 4px;
+  padding: 10px 18px; font-family: 'DM Sans', sans-serif; font-size: 13px;
+  font-weight: 500; cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+
+.history-card { background: var(--warm); border: 1.5px solid var(--rule); border-radius: 8px; overflow: hidden; }
+.hcard-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; background: var(--ink); cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.hcard-label { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 2px; color: var(--orange); text-transform: uppercase; }
+.hcard-status { display: flex; gap: 8px; align-items: center; }
+.status-pill {
+  font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 2px;
+  text-transform: uppercase; padding: 3px 9px; border-radius: 100px; border: 1px solid;
+}
+.status-pill.complete { color: #6BC47A; border-color: #6BC47A; }
+.status-pill.draft { color: var(--gold); border-color: var(--gold); }
+.status-pill.pending { color: rgba(253,248,242,.3); border-color: rgba(253,248,242,.15); }
+.hcard-preview { display: flex; flex-wrap: wrap; gap: 12px; padding: 14px 18px; }
+.hcard-stat { text-align: center; min-width: 60px; }
+.hcard-stat .n { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: var(--orange); }
+.hcard-stat .l { font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-top: 3px; }
+.hcard-body { display: none; padding: 0 18px 16px; }
+.hcard-body.open { display: block; }
+.hcard-entries { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.hcard-entry { background: var(--cream); border: 1px solid var(--rule); border-radius: 6px; padding: 11px 13px; }
+.he-label { font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: var(--orange); margin-bottom: 4px; }
+.he-val { font-size: 13px; color: var(--ink); line-height: 1.5; }
+
+/* REPORT MODAL */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(28,18,8,.88); z-index: 300;
+  align-items: flex-start; justify-content: center;
+  padding: 20px; overflow-y: auto;
+  backdrop-filter: blur(4px);
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--cream); border-radius: 10px;
+  width: 100%; max-width: 680px; position: relative;
+  animation: slideUp .35s cubic-bezier(.34,1.56,.64,1);
+  margin: auto;
+}
+@keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+.modal-close {
+  position: absolute; top: 14px; right: 14px;
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--rule); border: none; cursor: pointer;
+  font-size: 14px; color: var(--muted); display: flex; align-items: center; justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+}
+.modal-close:active { background: var(--ink); color: var(--cream); }
+.modal-header { background: var(--ink); padding: 32px 28px 24px; border-radius: 10px 10px 0 0; }
+.modal-header::after { content: ''; display: block; height: 3px; background: linear-gradient(to right, #C13030, var(--orange), var(--gold), #2B8B8B, #2B4FAA); margin-top: 20px; border-radius: 0 0 0 0; }
+.modal-eyebrow { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--orange); margin-bottom: 8px; }
+.modal-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 900; color: var(--cream); line-height: 1.1; }
+.modal-subtitle { font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; color: rgba(253,248,242,.4); margin-top: 4px; }
+.modal-body { padding: 28px 28px 36px; }
+.modal-section { margin-bottom: 28px; }
+.modal-section-label {
+  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--orange); margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.modal-section-label::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
+
+.score-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.score-card { background: var(--warm); border: 1.5px solid var(--rule); border-radius: 6px; padding: 14px; text-align: center; }
+.score-card .sn { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 900; line-height: 1; }
+.score-card .sl { font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-top: 5px; }
+.score-card .sb { height: 3px; border-radius: 2px; background: var(--rule); margin-top: 10px; overflow: hidden; }
+.score-card .sbf { height: 100%; border-radius: 2px; }
+.sc-orange .sn { color: var(--orange); } .sc-orange .sbf { background: var(--orange); }
+.sc-cobalt .sn { color: var(--cobalt); } .sc-cobalt .sbf { background: var(--cobalt); }
+.sc-teal .sn { color: #2B8B8B; } .sc-teal .sbf { background: #2B8B8B; }
+.sc-gold .sn { color: var(--gold); } .sc-gold .sbf { background: var(--gold); }
+
+.insight-card { border-left: 3px solid var(--orange); background: var(--warm); border-radius: 0 6px 6px 0; padding: 14px 18px; margin-bottom: 10px; }
+.insight-card.cobalt { border-color: var(--cobalt); }
+.insight-card.teal { border-color: #2B8B8B; }
+.insight-label { font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.insight-text { font-size: 14px; line-height: 1.7; color: var(--ink); }
+
+.person-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.person-card { background: var(--warm); border: 1.5px solid var(--rule); border-radius: 6px; padding: 16px; }
+.person-card-name { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; padding-bottom: 10px; margin-bottom: 12px; border-bottom: 2px solid; }
+.person-card.sophia .person-card-name { color: var(--orange); border-color: var(--orange); }
+.person-card.rory .person-card-name { color: var(--cobalt); border-color: var(--cobalt); }
+.person-card p { font-size: 13px; line-height: 1.6; color: var(--ink); margin-bottom: 8px; }
+.person-card p:last-child { margin-bottom: 0; }
+
+.love-notes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.love-note { background: var(--ink); border-radius: 6px; padding: 16px; }
+.love-from { font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: rgba(253,248,242,.4); margin-bottom: 8px; }
+.love-text { font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; color: rgba(253,248,242,.85); line-height: 1.6; }
+
+.modal-closing { background: var(--ink); border-radius: 6px; padding: 22px; text-align: center; margin-top: 8px; }
+.modal-closing p { font-family: 'Playfair Display', serif; font-style: italic; font-size: 15px; color: rgba(253,248,242,.5); line-height: 1.7; }
+
+.loading-state { text-align: center; padding: 56px 24px; }
+.loading-state .li { font-size: 40px; animation: spin 2s linear infinite; display: inline-block; margin-bottom: 14px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-state p { font-family: 'Playfair Display', serif; font-style: italic; font-size: 16px; color: var(--muted); }
+
+/* TRENDS */
+.trend-card { background: var(--warm); border: 1.5px solid var(--rule); border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+.trend-card h3 { font-family: 'Playfair Display', serif; font-size: 17px; margin-bottom: 18px; }
+.bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 80px; margin-bottom: 6px; }
+.bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; height: 100%; justify-content: flex-end; }
+.bar { width: 100%; border-radius: 2px 2px 0 0; min-height: 3px; }
+.bar-lbl { font-family: 'DM Mono', monospace; font-size: 7px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); text-align: center; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 10px; }
+.legend-item { display: flex; align-items: center; gap: 5px; font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+.legend-dot { width: 7px; height: 7px; border-radius: 50%; }
+
+/* LABEL MODAL */
+.label-sheet-overlay { display: none; position: fixed; inset: 0; background: rgba(28,18,8,.7); z-index: 400; align-items: flex-end; justify-content: center; backdrop-filter: blur(3px); }
+.label-sheet-overlay.open { display: flex; }
+.label-sheet { background: var(--cream); border-radius: 14px 14px 0 0; width: 100%; max-width: 480px; padding: 28px 24px; padding-bottom: max(28px, env(safe-area-inset-bottom)); animation: sheetUp .3s ease; }
+@keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.label-sheet h3 { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.label-sheet p { font-size: 13px; color: var(--muted); font-style: italic; margin-bottom: 18px; }
+.label-input { width: 100%; border: 1.5px solid var(--rule); border-radius: 6px; padding: 13px 16px; font-family: 'DM Sans', sans-serif; font-size: 15px; background: var(--warm); outline: none; margin-bottom: 12px; }
+.label-input:focus { border-color: var(--orange); }
+.label-sugs { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 20px; }
+.label-sug { padding: 7px 14px; border: 1.5px solid var(--rule); border-radius: 100px; font-size: 12px; color: var(--muted); background: var(--warm); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.label-sug:active { border-color: var(--orange); color: var(--orange); }
+.label-btns { display: flex; gap: 10px; }
+.label-btn-set { flex: 1; padding: 16px; background: var(--orange); color: #fff; border: none; border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.label-btn-cancel { padding: 16px 20px; background: transparent; color: var(--muted); border: 1.5px solid var(--rule); border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+
+/* TOAST */
+.toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(10px); background: var(--forest); color: #fff; padding: 11px 20px; border-radius: 100px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; opacity: 0; transition: all .3s; pointer-events: none; z-index: 999; white-space: nowrap; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+@media (max-width: 480px) {
+  .person-grid, .love-notes, .hcard-entries { grid-template-columns: 1fr; }
+  .score-row { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════
+     SCREEN 1 — PICKER
+═══════════════════════════════════ -->
+<div id="screen-picker">
+  <div class="picker-wordmark">S <em>&</em> R</div>
+  <div class="picker-feather">🪶</div>
+  <div class="picker-title">Sophia<br><em>&</em> Rory</div>
+  <div class="picker-sub">Who's checking in?</div>
+  <div class="picker-cards">
+    <a href="?who=sophia" class="picker-card sophia">
+      <div class="picker-card-inner">
+        <span class="picker-card-emoji">🦁</span>
+        <div>
+          <div class="picker-card-name">Sophia</div>
+          <div class="picker-card-role">Wife</div>
+        </div>
+        <span class="picker-card-arrow">→</span>
+      </div>
+    </a>
+    <a href="?who=rory" class="picker-card rory">
+      <div class="picker-card-inner">
+        <span class="picker-card-emoji">🐠</span>
+        <div>
+          <div class="picker-card-name">Rory</div>
+          <div class="picker-card-role">Husband</div>
+        </div>
+        <span class="picker-card-arrow">→</span>
+      </div>
+    </a>
+  </div>
+  <div class="picker-quote">"Keep falling in love with the stranger your partner is becoming."</div>
+</div>
+
+<!-- ═══════════════════════════════════
+     SCREEN 2 — APP
+═══════════════════════════════════ -->
+<div id="screen-app">
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <button class="nav-who" id="nav-who-btn" onclick="goBack()">← Switch</button>
+      <div class="nav-tabs">
+        <button class="nav-tab active" onclick="showTab('form', this)">Check-In</button>
+        <button class="nav-tab" onclick="showTab('history', this)">History</button>
+        <button class="nav-tab" onclick="showTab('trends', this)">Trends</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-name" id="hero-name">Sophia</div>
+    <div class="hero-title">Sophia <em>&</em> Rory</div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;">
+      <div class="hero-checkin-label" onclick="openLabelSheet()">
+        <span id="label-display">June 2026</span>
+        <span class="edit-icon">✏</span>
+      </div>
+      <button class="hero-new-btn" onclick="newCheckin()">+ New</button>
+    </div>
+    <div class="progress-bar-wrap" style="margin: 12px -24px -28px; padding: 8px 24px;">
+      <div class="progress-bar-track"><div class="progress-bar-fill" id="prog-fill"></div></div>
+    </div>
+  </div>
+
+  <div class="quote-strip">
+    <p>"We are all changing all the time. The point of marriage is not to find your soulmate and freeze them in place. It's to keep falling in love with the stranger your partner is becoming."</p>
+  </div>
+
+  <!-- FORM TAB -->
+  <div id="tab-form" class="panel active">
+    <div class="form-wrap">
+
+      <div class="section-block">
+        <div class="section-head">
+          <div class="section-num">01</div>
+          <div><div class="section-title">Looking Back</div><div class="section-sub">Your take on this period together</div></div>
+        </div>
+        <div class="section-rule"></div>
+
+        <div class="q-block">
+          <div class="q-label">Best Moment</div>
+          <div class="q-text">What was your favourite experience together this period?</div>
+          <textarea id="f-highlight" placeholder="A trip, a night in, a conversation, a small win..."></textarea>
+        </div>
+        <div class="q-block">
+          <div class="q-label">Gratitude</div>
+          <div class="q-text">What did your partner do that you most appreciated?</div>
+          <textarea id="f-gratitude" placeholder="Something specific they did or said..."></textarea>
+        </div>
+        <div class="q-block">
+          <div class="q-label">Challenge</div>
+          <div class="q-text">What was your hardest stretch, and how did you handle it?</div>
+          <textarea id="f-challenge" placeholder="What happened, how you showed up, what you learned..."></textarea>
+        </div>
+        <div class="q-block">
+          <div class="q-label">Connection</div>
+          <div class="q-text">How connected did you feel to your partner overall?</div>
+          <div class="scale" id="scale-connection">
+            <input type="radio" name="connection" id="c1" value="1"><label for="c1">1</label>
+            <input type="radio" name="connection" id="c2" value="2"><label for="c2">2</label>
+            <input type="radio" name="connection" id="c3" value="3"><label for="c3">3</label>
+            <input type="radio" name="connection" id="c4" value="4"><label for="c4">4</label>
+            <input type="radio" name="connection" id="c5" value="5"><label for="c5">5</label>
+            <input type="radio" name="connection" id="c6" value="6"><label for="c6">6</label>
+            <input type="radio" name="connection" id="c7" value="7"><label for="c7">7</label>
+            <input type="radio" name="connection" id="c8" value="8"><label for="c8">8</label>
+            <input type="radio" name="connection" id="c9" value="9"><label for="c9">9</label>
+            <input type="radio" name="connection" id="c10" value="10"><label for="c10">10</label>
+          </div>
+          <div class="scale-ends"><span>Distant</span><span>Deeply connected</span></div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-head">
+          <div class="section-num">02</div>
+          <div><div class="section-title">The Relationship</div><div class="section-sub">How you see yourselves as a team</div></div>
+        </div>
+        <div class="section-rule"></div>
+
+        <div class="q-block">
+          <div class="q-label">Strengths</div>
+          <div class="q-text">Where are you really good together right now?</div>
+          <div class="chips" id="chips-strengths">
+            <input type="checkbox" id="s1" value="Communication"><label for="s1" class="chip">Communication</label>
+            <input type="checkbox" id="s2" value="Quality time"><label for="s2" class="chip">Quality time</label>
+            <input type="checkbox" id="s3" value="Physical intimacy"><label for="s3" class="chip">Physical intimacy</label>
+            <input type="checkbox" id="s4" value="Fun & adventure"><label for="s4" class="chip">Fun & adventure</label>
+            <input type="checkbox" id="s5" value="Shared goals"><label for="s5" class="chip">Shared goals</label>
+            <input type="checkbox" id="s6" value="Supporting each other"><label for="s6" class="chip">Supporting each other</label>
+            <input type="checkbox" id="s7" value="Conflict repair"><label for="s7" class="chip">Conflict repair</label>
+            <input type="checkbox" id="s8" value="Home & logistics"><label for="s8" class="chip">Home & logistics</label>
+            <input type="checkbox" id="s9" value="Finances"><label for="s9" class="chip">Finances</label>
+            <input type="checkbox" id="s10" value="Friendship"><label for="s10" class="chip">Friendship</label>
+          </div>
+        </div>
+        <div class="q-block">
+          <div class="q-label">Growth Area</div>
+          <div class="q-text">Where do you most want to invest together going forward?</div>
+          <div class="chips" id="chips-growth">
+            <input type="checkbox" id="g1" value="Date nights"><label for="g1" class="chip">Date nights</label>
+            <input type="checkbox" id="g2" value="Deeper talks"><label for="g2" class="chip">Deeper talks</label>
+            <input type="checkbox" id="g3" value="Physical intimacy"><label for="g3" class="chip">Physical intimacy</label>
+            <input type="checkbox" id="g4" value="Shared activities"><label for="g4" class="chip">Shared activities</label>
+            <input type="checkbox" id="g5" value="Financial alignment"><label for="g5" class="chip">Financial alignment</label>
+            <input type="checkbox" id="g6" value="Conflict resolution"><label for="g6" class="chip">Conflict resolution</label>
+            <input type="checkbox" id="g7" value="New experiences"><label for="g7" class="chip">New experiences</label>
+            <input type="checkbox" id="g8" value="Individual space"><label for="g8" class="chip">Individual space</label>
+          </div>
+        </div>
+        <div class="q-block">
+          <div class="q-label">Unspoken</div>
+          <div class="q-text">Anything you've wanted to raise but haven't?</div>
+          <textarea id="f-unspoken" placeholder="This is a safe space..."></textarea>
+        </div>
+        <div class="q-block">
+          <div class="q-label">Love Language</div>
+          <div class="q-text">How well is your love language being met right now?</div>
+          <div class="scale">
+            <input type="radio" name="lovelang" id="ll1" value="1"><label for="ll1">1</label>
+            <input type="radio" name="lovelang" id="ll2" value="2"><label for="ll2">2</label>
+            <input type="radio" name="lovelang" id="ll3" value="3"><label for="ll3">3</label>
+            <input type="radio" name="lovelang" id="ll4" value="4"><label for="ll4">4</label>
+            <input type="radio" name="lovelang" id="ll5" value="5"><label for="ll5">5</label>
+            <input type="radio" name="lovelang" id="ll6" value="6"><label for="ll6">6</label>
+            <input type="radio" name="lovelang" id="ll7" value="7"><label for="ll7">7</label>
+            <input type="radio" name="lovelang" id="ll8" value="8"><label for="ll8">8</label>
+            <input type="radio" name="lovelang" id="ll9" value="9"><label for="ll9">9</label>
+            <input type="radio" name="lovelang" id="ll10" value="10"><label for="ll10">10</label>
+          </div>
+          <div class="scale-ends"><span>Barely</span><span>Fully</span></div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-head">
+          <div class="section-num">03</div>
+          <div><div class="section-title">You, Individually</div><div class="section-sub">How you're doing as a person right now</div></div>
+        </div>
+        <div class="section-rule"></div>
+
+        <div class="q-block">
+          <div class="q-label">Wellbeing</div>
+          <div class="q-text">How would you rate your own energy, mental health & fulfilment?</div>
+          <div class="scale">
+            <input type="radio" name="wellbeing" id="wb1" value="1"><label for="wb1">1</label>
+            <input type="radio" name="wellbeing" id="wb2" value="2"><label for="wb2">2</label>
+            <input type="radio" name="wellbeing" id="wb3" value="3"><label for="wb3">3</label>
+            <input type="radio" name="wellbeing" id="wb4" value="4"><label for="wb4">4</label>
+            <input type="radio" name="wellbeing" id="wb5" value="5"><label for="wb5">5</label>
+            <input type="radio" name="wellbeing" id="wb6" value="6"><label for="wb6">6</label>
+            <input type="radio" name="wellbeing" id="wb7" value="7"><label for="wb7">7</label>
+            <input type="radio" name="wellbeing" id="wb8" value="8"><label for="wb8">8</label>
+            <input type="radio" name="wellbeing" id="wb9" value="9"><label for="wb9">9</label>
+            <input type="radio" name="wellbeing" id="wb10" value="10"><label for="wb10">10</label>
+          </div>
+          <div class="scale-ends"><span>Running on empty</span><span>Thriving</span></div>
+        </div>
+        <div class="q-block">
+          <div class="q-label">Personal Goal</div>
+          <div class="q-text">One personal goal you most want to progress on next?</div>
+          <textarea id="f-goal" placeholder="Work, health, learning, something personal..."></textarea>
+        </div>
+        <div class="q-block">
+          <div class="q-label">Support Request</div>
+          <div class="q-text">One thing your partner could do to better support you?</div>
+          <textarea id="f-support" placeholder="Specific, kind, actionable..."></textarea>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-head">
+          <div class="section-num">04</div>
+          <div><div class="section-title">Life & Plans</div><div class="section-sub">The practical and the big picture</div></div>
+        </div>
+        <div class="section-rule"></div>
+
+        <div class="q-block">
+          <div class="q-label">Day-to-Day</div>
+          <div class="q-text">How is the day-to-day running — home, finances, admin, Chino?</div>
+          <textarea id="f-daily" placeholder="What's working, what feels off..."></textarea>
+        </div>
+        <div class="q-block">
+          <div class="q-label">Big Picture</div>
+          <div class="q-text">Any major decisions that need active attention?</div>
+          <div class="chips" id="chips-bigpic">
+            <input type="checkbox" id="bp1" value="Property / home"><label for="bp1" class="chip">Property / home</label>
+            <input type="checkbox" id="bp2" value="Family planning"><label for="bp2" class="chip">Family planning</label>
+            <input type="checkbox" id="bp3" value="Financial goals"><label for="bp3" class="chip">Financial goals</label>
+            <input type="checkbox" id="bp4" value="Career changes"><label for="bp4" class="chip">Career changes</label>
+            <input type="checkbox" id="bp5" value="Travel plans"><label for="bp5" class="chip">Travel plans</label>
+            <input type="checkbox" id="bp6" value="Health decisions"><label for="bp6" class="chip">Health decisions</label>
+            <input type="checkbox" id="bp7" value="Lifestyle changes"><label for="bp7" class="chip">Lifestyle changes</label>
+            <input type="checkbox" id="bp8" value="Extended family"><label for="bp8" class="chip">Extended family</label>
+          </div>
+          <textarea id="f-bigpic" style="margin-top:12px" placeholder="Notes on whatever you've flagged..."></textarea>
+        </div>
+        <div class="q-block">
+          <div class="q-label">One Thing</div>
+          <div class="q-text">One experience you want to have together soon that you'll actually remember?</div>
+          <textarea id="f-one-thing" placeholder="Trip, tradition, challenge, date..."></textarea>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-head">
+          <div class="section-num">05</div>
+          <div><div class="section-title">To Close</div><div class="section-sub">End on something real</div></div>
+        </div>
+        <div class="section-rule"></div>
+
+        <div class="q-block">
+          <div class="q-label">Love Note</div>
+          <div class="q-text">One sentence to your partner about why you're glad you're doing life with them.</div>
+          <textarea id="f-love-note" placeholder="From the heart — they'll read this..."></textarea>
+        </div>
+        <div class="q-block">
+          <div class="q-label">One Word</div>
+          <div class="q-text">One word that sums up this period for you.</div>
+          <textarea id="f-word" style="min-height:60px" placeholder=""></textarea>
+        </div>
+
+        <div class="closing-card">
+          <p>"Keep falling in love with the stranger your partner is becoming."</p>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /tab-form -->
+
+  <!-- HISTORY TAB -->
+  <div id="tab-history" class="panel">
+    <div class="panel-wrap">
+      <div class="panel-title">History</div>
+      <div class="panel-sub">Every check-in, side by side — report unlocks when you've both completed it</div>
+      <div id="history-content"></div>
+    </div>
+  </div>
+
+  <!-- TRENDS TAB -->
+  <div id="tab-trends" class="panel">
+    <div class="panel-wrap">
+      <div class="panel-title">Trends</div>
+      <div class="panel-sub">Watching the numbers move together</div>
+      <div id="trends-content"></div>
+    </div>
+  </div>
+
+  <!-- SAVE BAR -->
+  <div class="save-bar" id="save-bar">
+    <button class="save-bar-complete" id="save-bar-complete-btn" onclick="saveComplete()">🪶 Mark Complete</button>
+    <button class="save-bar-draft" onclick="saveDraft()">💾 Save Progress</button>
+  </div>
+
+</div><!-- /screen-app -->
+
+<!-- REPORT MODAL -->
+<div class="modal-overlay" id="report-overlay" onclick="closeReportOnBg(event)">
+  <div class="modal" id="report-modal">
+    <button class="modal-close" onclick="closeReport()">✕</button>
+    <div id="report-content"></div>
+  </div>
+</div>
+
+<!-- LABEL SHEET -->
+<div class="label-sheet-overlay" id="label-overlay" onclick="closeLabelOnBg(event)">
+  <div class="label-sheet">
+    <h3>Name this check-in</h3>
+    <p>A date, a season, a moment — whatever marks it.</p>
+    <input class="label-input" id="label-input" type="text" placeholder="e.g. June 2026, After the move...">
+    <div class="label-sugs" id="label-sugs"></div>
+    <div class="label-btns">
+      <button class="label-btn-set" onclick="confirmLabel()">Set</button>
+      <button class="label-btn-cancel" onclick="closeLabelSheet()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── STATE ───
+const KEY = 'sr_v4';
+let who = null;
+let label = null;
+
+function store() { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch { return {}; } }
+function setStore(s) { localStorage.setItem(KEY, JSON.stringify(s)); }
+function getEntry(lbl, person) { const s = store(); return s[lbl] && s[lbl][person] || null; }
+function putEntry(lbl, person, data) { const s = store(); if (!s[lbl]) s[lbl] = {}; s[lbl][person] = data; setStore(s); }
+function allLabels() {
+  const s = store();
+  return Object.keys(s).sort((a, b) => {
+    const ea = s[a].sophia || s[a].rory;
+    const eb = s[b].sophia || s[b].rory;
+    return new Date(eb && eb.savedAt || 0) - new Date(ea && ea.savedAt || 0);
+  });
+}
+
+// ─── BOOT ───
+(function boot() {
+  const p = new URLSearchParams(location.search).get('who');
+  if (p === 'sophia' || p === 'rory') {
+    who = p;
+    showApp();
+  }
+})();
+
+function showApp() {
+  document.getElementById('screen-picker').classList.add('hidden');
+  const app = document.getElementById('screen-app');
+  app.style.display = 'block';
+
+  // Set default label
+  if (!label) {
+    label = defaultLabel();
+    document.getElementById('label-display').textContent = label;
+  }
+
+  // Apply persona
+  const isSophia = who === 'sophia';
+  document.getElementById('hero-name').textContent = (isSophia ? '🦁 ' : '🐠 ') + (isSophia ? 'Sophia' : 'Rory') + "'s Check-In";
+  const whoBtn = document.getElementById('nav-who-btn');
+  whoBtn.textContent = (isSophia ? '🦁 Sophia' : '🐠 Rory') + ' ←';
+  whoBtn.className = 'nav-who' + (isSophia ? '' : ' rory-mode');
+
+  loadForm();
+  document.getElementById('save-bar').classList.add('visible');
+}
+
+function goBack() {
+  document.getElementById('screen-picker').classList.remove('hidden');
+  document.getElementById('screen-app').style.display = 'none';
+  document.getElementById('save-bar').classList.remove('visible');
+  clearForm();
+  who = null;
+  // Update URL without reload
+  history.replaceState(null, '', location.pathname);
+}
+
+// ─── TABS ───
+function showTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  const bar = document.getElementById('save-bar');
+  if (id === 'form') { bar.classList.add('visible'); }
+  else { bar.classList.remove('visible'); }
+  if (id === 'history') renderHistory();
+  if (id === 'trends') renderTrends();
+}
+
+// ─── LABEL ───
+function defaultLabel() {
+  return new Date().toLocaleString('en-AU', { month: 'long', year: 'numeric' });
+}
+function getLabelSuggestions() {
+  const now = new Date();
+  const m = now.getMonth();
+  const y = now.getFullYear();
+  const month = now.toLocaleString('en-AU', { month: 'long' });
+  const seasons = ['Summer','Summer','Autumn','Autumn','Autumn','Winter','Winter','Winter','Spring','Spring','Spring','Summer'];
+  return [month + ' ' + y, seasons[m] + ' ' + y, 'Mid ' + y, 'End of ' + y];
+}
+function openLabelSheet() {
+  document.getElementById('label-input').value = label || '';
+  const sugs = getLabelSuggestions();
+  document.getElementById('label-sugs').innerHTML = sugs.map(s => `<span class="label-sug" onclick="pickSug('${s}')">${s}</span>`).join('');
+  document.getElementById('label-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('label-input').focus(), 100);
+}
+function closeLabelSheet() { document.getElementById('label-overlay').classList.remove('open'); }
+function closeLabelOnBg(e) { if (e.target === document.getElementById('label-overlay')) closeLabelSheet(); }
+function pickSug(s) { document.getElementById('label-input').value = s; }
+function confirmLabel() {
+  const v = document.getElementById('label-input').value.trim();
+  if (!v) { showToast('Give this check-in a name first'); return; }
+  label = v;
+  document.getElementById('label-display').textContent = label;
+  closeLabelSheet();
+  clearForm();
+  loadForm();
+}
+function newCheckin() {
+  document.getElementById('label-input').value = '';
+  const sugs = getLabelSuggestions();
+  document.getElementById('label-sugs').innerHTML = sugs.map(s => `<span class="label-sug" onclick="pickSug('${s}')">${s}</span>`).join('');
+  document.getElementById('label-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('label-input').focus(), 100);
+}
+
+// ─── FORM ───
+function v(id) { return document.getElementById(id).value; }
+function radio(name) { const r = document.querySelector(`input[name="${name}"]:checked`); return r ? +r.value : null; }
+function chips(id) { return [...document.querySelectorAll(`#${id} input:checked`)].map(c => c.value); }
+
+function collectForm() {
+  return {
+    who, label, savedAt: new Date().toISOString(),
+    highlight: v('f-highlight'), gratitude: v('f-gratitude'), challenge: v('f-challenge'),
+    connection: radio('connection'), strengths: chips('chips-strengths'), growth: chips('chips-growth'),
+    unspoken: v('f-unspoken'), lovelang: radio('lovelang'), wellbeing: radio('wellbeing'),
+    goal: v('f-goal'), support: v('f-support'), daily: v('f-daily'),
+    bigpic: chips('chips-bigpic'), bigpic_notes: v('f-bigpic'),
+    one_thing: v('f-one-thing'), love_note: v('f-love-note'), word: v('f-word'),
+  };
+}
+
+function clearForm() {
+  document.querySelectorAll('#tab-form textarea').forEach(t => t.value = '');
+  document.querySelectorAll('#tab-form input[type=radio]').forEach(r => r.checked = false);
+  document.querySelectorAll('#tab-form input[type=checkbox]').forEach(c => c.checked = false);
+  updateProgress();
+  const btn = document.getElementById('save-bar-complete-btn');
+  btn.textContent = '🪶 Mark Complete';
+  btn.style.background = '';
+  btn.className = 'save-bar-complete';
+}
+
+function loadForm() {
+  if (!label || !who) return;
+  const saved = getEntry(label, who);
+  if (!saved) { updateProgress(); return; }
+  const sv = (id, val) => { if (val) document.getElementById(id).value = val; };
+  sv('f-highlight', saved.highlight); sv('f-gratitude', saved.gratitude); sv('f-challenge', saved.challenge);
+  sv('f-unspoken', saved.unspoken); sv('f-goal', saved.goal); sv('f-support', saved.support);
+  sv('f-daily', saved.daily); sv('f-bigpic', saved.bigpic_notes); sv('f-one-thing', saved.one_thing);
+  sv('f-love-note', saved.love_note); sv('f-word', saved.word);
+  if (saved.connection) { const r = document.getElementById('c' + saved.connection); if (r) r.checked = true; }
+  if (saved.lovelang) { const r = document.getElementById('ll' + saved.lovelang); if (r) r.checked = true; }
+  if (saved.wellbeing) { const r = document.getElementById('wb' + saved.wellbeing); if (r) r.checked = true; }
+  (saved.strengths||[]).forEach(val => { const el = document.querySelector(`#chips-strengths input[value="${val}"]`); if (el) el.checked = true; });
+  (saved.growth||[]).forEach(val => { const el = document.querySelector(`#chips-growth input[value="${val}"]`); if (el) el.checked = true; });
+  (saved.bigpic||[]).forEach(val => { const el = document.querySelector(`#chips-bigpic input[value="${val}"]`); if (el) el.checked = true; });
+  if (saved.status === 'complete') {
+    const btn = document.getElementById('save-bar-complete-btn');
+    btn.textContent = '✓ Completed';
+    btn.style.background = 'var(--forest)';
+  }
+  updateProgress();
+}
+
+function updateProgress() {
+  const tas = document.querySelectorAll('#tab-form textarea');
+  const radios = ['connection','lovelang','wellbeing'].filter(n => document.querySelector(`input[name="${n}"]:checked`));
+  const filled = [...tas].filter(t => t.value.trim()).length + radios.length;
+  const pct = Math.round(filled / (tas.length + 3) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+}
+
+document.querySelectorAll('#tab-form textarea, #tab-form input[type=radio]').forEach(el => {
+  el.addEventListener('change', updateProgress);
+  el.addEventListener('input', updateProgress);
+});
+
+// ─── SAVE ───
+function saveDraft() {
+  const d = collectForm(); d.status = 'draft';
+  if (!d.highlight && !d.connection && !d.gratitude) { showToast('Fill in a few answers first'); return; }
+  putEntry(label, who, d);
+  showToast('Progress saved 💾');
+}
+
+function saveComplete() {
+  const d = collectForm(); d.status = 'complete';
+  if (!d.highlight && !d.connection) { showToast('Fill in a few more sections first'); return; }
+  putEntry(label, who, d);
+  const btn = document.getElementById('save-bar-complete-btn');
+  btn.textContent = '✓ Completed';
+  btn.style.background = 'var(--forest)';
+  showToast('✓ Saved — ' + (who === 'sophia' ? 'Sophia' : 'Rory'));
+}
+
+// ─── HISTORY ───
+function bothComplete(lbl) {
+  const s = getEntry(lbl, 'sophia'), r = getEntry(lbl, 'rory');
+  return s && r && s.status === 'complete' && r.status === 'complete';
+}
+
+function renderHistory() {
+  const labels = allLabels();
+  const el = document.getElementById('history-content');
+  if (!labels.length) {
+    el.innerHTML = `<div class="empty-state"><div class="es-icon">🪶</div><h3>Nothing yet</h3><p>Save your first check-in to see it here.</p></div>`;
+    return;
+  }
+  let html = '<div class="history-list">';
+  labels.forEach((lbl, i) => {
+    const s = getEntry(lbl, 'sophia'), r = getEntry(lbl, 'rory');
+    const ready = bothComplete(lbl);
+    if (ready) {
+      const combined = buildCombined(s, r);
+      html += `<div class="report-teaser" onclick="openReport(${JSON.stringify(combined).replace(/"/g,'&quot;')})">
+        <div class="rt-eyebrow">${lbl} — Both checked in</div>
+        <div class="rt-title">Your debrief is ready.</div>
+        <div class="rt-sub">You both showed up. The insights are in.</div>
+        <div class="rt-row"><button class="rt-cta">Read the Report →</button></div>
+      </div>`;
+    }
+    const sStatus = s ? s.status || 'draft' : 'pending';
+    const rStatus = r ? r.status || 'draft' : 'pending';
+    html += `<div class="history-card">
+      <div class="hcard-head" onclick="toggleCard('hb${i}')">
+        <span class="hcard-label">${lbl}</span>
+        <div class="hcard-status">
+          <span class="status-pill ${sStatus}">🦁 ${sStatus}</span>
+          <span class="status-pill ${rStatus}">🐠 ${rStatus}</span>
+        </div>
+      </div>`;
+    if (s || r) {
+      html += '<div class="hcard-preview">';
+      if (s && s.connection) html += `<div class="hcard-stat"><div class="n">${s.connection}</div><div class="l">🦁 Conn.</div></div>`;
+      if (r && r.connection) html += `<div class="hcard-stat"><div class="n">${r.connection}</div><div class="l">🐠 Conn.</div></div>`;
+      if (s && s.wellbeing) html += `<div class="hcard-stat"><div class="n">${s.wellbeing}</div><div class="l">🦁 WB</div></div>`;
+      if (r && r.wellbeing) html += `<div class="hcard-stat"><div class="n">${r.wellbeing}</div><div class="l">🐠 WB</div></div>`;
+      if (s && s.word) html += `<div class="hcard-stat"><div class="n" style="font-size:16px">${s.word}</div><div class="l">🦁 word</div></div>`;
+      if (r && r.word) html += `<div class="hcard-stat"><div class="n" style="font-size:16px">${r.word}</div><div class="l">🐠 word</div></div>`;
+      html += '</div>';
+    }
+    html += `<div class="hcard-body" id="hb${i}"><div class="hcard-entries">`;
+    function ei(lbl, val) { if (val) html += `<div class="hcard-entry"><div class="he-label">${lbl}</div><div class="he-val">${val}</div></div>`; }
+    if (s) { ei('🦁 Best moment', s.highlight); ei('🦁 Grateful for', s.gratitude); ei('🦁 Goal', s.goal); ei('🦁 Love note', s.love_note); }
+    if (r) { ei('🐠 Best moment', r.highlight); ei('🐠 Grateful for', r.gratitude); ei('🐠 Goal', r.goal); ei('🐠 Love note', r.love_note); }
+    html += '</div></div></div>';
+  });
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+function toggleCard(id) { document.getElementById(id).classList.toggle('open'); }
+
+function buildCombined(s, r) {
+  return {
+    label: s.label || r.label || '',
+    connection_s: s.connection, connection_r: r.connection,
+    lovelang_s: s.lovelang, lovelang_r: r.lovelang,
+    wellbeing_s: s.wellbeing, wellbeing_r: r.wellbeing,
+    highlight_s: s.highlight, highlight_r: r.highlight,
+    gratitude_s: s.gratitude, gratitude_r: r.gratitude,
+    challenge_s: s.challenge, challenge_r: r.challenge,
+    strengths_s: s.strengths, strengths_r: r.strengths,
+    growth_s: s.growth, growth_r: r.growth,
+    unspoken_s: s.unspoken, unspoken_r: r.unspoken,
+    goal_s: s.goal, goal_r: r.goal,
+    support_s: s.support, support_r: r.support,
+    one_thing_s: s.one_thing, one_thing_r: r.one_thing,
+    love_s: s.love_note, love_r: r.love_note,
+    word_s: s.word, word_r: r.word,
+  };
+}
+
+// ─── REPORT ───
+async function openReport(c) {
+  document.getElementById('report-overlay').classList.add('open');
+  document.getElementById('report-content').innerHTML = `
+    <div class="modal-header">
+      <div class="modal-eyebrow">${c.label} — Insight Report</div>
+      <div class="modal-title">Your Quarter,<br><em style="font-style:italic;font-weight:400">Decoded</em></div>
+      <div class="modal-subtitle">Two humans. One honest reckoning.</div>
+    </div>
+    <div class="modal-body"><div class="loading-state"><div class="li">🪶</div><p>Reading the leaves…</p></div></div>`;
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514', max_tokens: 1000,
+        system: `You are a warm, witty, perceptive relationship analyst writing insight reports for couples. Tone: like a brilliant friend who's read every relationship book — affectionate, sharp, occasionally funny, never preachy. Use "Sophia" and "Rory" directly. Return ONLY valid JSON, no markdown:
+{"headline":"punchy 6-10 word headline for their period","vibe":"2 warm sentences on the overall vibe specific to their data","combined":[{"label":"Superpower this period","text":"..."},{"label":"Worth a conversation","text":"..."},{"label":"One thing to try","text":"..."}],"sophia":{"headline":"3-5 word headline","insight":"2-3 sentences on Sophia's scores/goals/requests","nudge":"one specific kind suggestion"},"rory":{"headline":"3-5 word headline","insight":"2-3 sentences on Rory's scores/goals/requests","nudge":"one specific kind suggestion"},"closing":"one warm original closing line"}`,
+        messages: [{ role: 'user', content: buildPrompt(c) }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content.filter(b => b.type === 'text').map(b => b.text).join('');
+    const ins = JSON.parse(text.replace(/```json|```/g,'').trim());
+    renderReport(c, ins);
+  } catch(e) { renderReportFallback(c); }
+}
+
+function buildPrompt(c) {
+  return `Check-in: ${c.label}
+SOPHIA: Connection ${c.connection_s||'?'}/10 | Love lang ${c.lovelang_s||'?'}/10 | Wellbeing ${c.wellbeing_s||'?'}/10
+Best moment: ${c.highlight_s||'—'} | Grateful: ${c.gratitude_s||'—'} | Challenge: ${c.challenge_s||'—'}
+Strengths: ${(c.strengths_s||[]).join(', ')||'—'} | Growth: ${(c.growth_s||[]).join(', ')||'—'}
+Unspoken: ${c.unspoken_s||'—'} | Goal: ${c.goal_s||'—'} | Asks of Rory: ${c.support_s||'—'}
+One thing: ${c.one_thing_s||'—'} | Love note: ${c.love_s||'—'} | Word: ${c.word_s||'—'}
+
+RORY: Connection ${c.connection_r||'?'}/10 | Love lang ${c.lovelang_r||'?'}/10 | Wellbeing ${c.wellbeing_r||'?'}/10
+Best moment: ${c.highlight_r||'—'} | Grateful: ${c.gratitude_r||'—'} | Challenge: ${c.challenge_r||'—'}
+Strengths: ${(c.strengths_r||[]).join(', ')||'—'} | Growth: ${(c.growth_r||[]).join(', ')||'—'}
+Unspoken: ${c.unspoken_r||'—'} | Goal: ${c.goal_r||'—'} | Asks of Sophia: ${c.support_r||'—'}
+One thing: ${c.one_thing_r||'—'} | Love note: ${c.love_r||'—'} | Word: ${c.word_r||'—'}`;
+}
+
+function scBar(n) { return n ? `<div class="sb"><div class="sbf" style="width:${n*10}%"></div></div>` : ''; }
+
+function renderReport(c, ins) {
+  document.getElementById('report-content').innerHTML = `
+    <div class="modal-header">
+      <div class="modal-eyebrow">${c.label} — Insight Report</div>
+      <div class="modal-title">${ins.headline||'Your Period, Decoded'}</div>
+      <div class="modal-subtitle">${ins.vibe||''}</div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <div class="modal-section-label">The Numbers</div>
+        <div class="score-row">
+          ${c.connection_s?`<div class="score-card sc-orange"><div class="sn">${c.connection_s}</div><div class="sl">🦁 Connection</div>${scBar(c.connection_s)}</div>`:''}
+          ${c.connection_r?`<div class="score-card sc-cobalt"><div class="sn">${c.connection_r}</div><div class="sl">🐠 Connection</div>${scBar(c.connection_r)}</div>`:''}
+          ${c.wellbeing_s?`<div class="score-card sc-teal"><div class="sn">${c.wellbeing_s}</div><div class="sl">🦁 Wellbeing</div>${scBar(c.wellbeing_s)}</div>`:''}
+          ${c.wellbeing_r?`<div class="score-card sc-gold"><div class="sn">${c.wellbeing_r}</div><div class="sl">🐠 Wellbeing</div>${scBar(c.wellbeing_r)}</div>`:''}
+        </div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-label">As a Couple</div>
+        ${(ins.combined||[]).map((ci,i)=>`<div class="insight-card ${['','cobalt','teal'][i]}"><div class="insight-label">${ci.label}</div><div class="insight-text">${ci.text}</div></div>`).join('')}
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-label">Individually</div>
+        <div class="person-grid">
+          <div class="person-card sophia">
+            <div class="person-card-name">🦁 Sophia — ${ins.sophia&&ins.sophia.headline||''}</div>
+            <p>${ins.sophia&&ins.sophia.insight||''}</p>
+            ${ins.sophia&&ins.sophia.nudge?`<p style="border-top:1px solid var(--rule);padding-top:10px;margin-top:8px;font-style:italic;color:var(--muted);font-size:12px">💡 ${ins.sophia.nudge}</p>`:''}
+          </div>
+          <div class="person-card rory">
+            <div class="person-card-name">🐠 Rory — ${ins.rory&&ins.rory.headline||''}</div>
+            <p>${ins.rory&&ins.rory.insight||''}</p>
+            ${ins.rory&&ins.rory.nudge?`<p style="border-top:1px solid var(--rule);padding-top:10px;margin-top:8px;font-style:italic;color:var(--muted);font-size:12px">💡 ${ins.rory.nudge}</p>`:''}
+          </div>
+        </div>
+      </div>
+      ${(c.love_s||c.love_r)?`<div class="modal-section"><div class="modal-section-label">Love Notes</div><div class="love-notes">${c.love_s?`<div class="love-note"><div class="love-from">🦁 Sophia → Rory</div><div class="love-text">"${c.love_s}"</div></div>`:''}${c.love_r?`<div class="love-note"><div class="love-from">🐠 Rory → Sophia</div><div class="love-text">"${c.love_r}"</div></div>`:''}</div></div>`:''}
+      ${(c.word_s||c.word_r)?`<div class="modal-section"><div class="modal-section-label">Words of the Period</div><div style="display:flex;gap:12px;flex-wrap:wrap">${c.word_s?`<div style="background:var(--warm);border:1.5px solid var(--rule);border-radius:6px;padding:14px 20px;text-align:center"><div style="font-family:'Playfair Display',serif;font-size:26px;color:var(--orange)">${c.word_s}</div><div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:4px">🦁 Sophia</div></div>`:''}${c.word_r?`<div style="background:var(--warm);border:1.5px solid var(--rule);border-radius:6px;padding:14px 20px;text-align:center"><div style="font-family:'Playfair Display',serif;font-size:26px;color:var(--cobalt)">${c.word_r}</div><div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:4px">🐠 Rory</div></div>`:''}</div></div>`:''}
+      <div class="modal-closing"><p>${ins.closing||'See you next time.'}</p></div>
+    </div>`;
+}
+
+function renderReportFallback(c) {
+  document.getElementById('report-content').innerHTML = `
+    <div class="modal-header"><div class="modal-eyebrow">${c.label}</div><div class="modal-title">Your Period</div></div>
+    <div class="modal-body">
+      <div class="modal-section"><div class="modal-section-label">The Numbers</div><div class="score-row">
+        ${c.connection_s?`<div class="score-card sc-orange"><div class="sn">${c.connection_s}</div><div class="sl">🦁 Connection</div></div>`:''}
+        ${c.connection_r?`<div class="score-card sc-cobalt"><div class="sn">${c.connection_r}</div><div class="sl">🐠 Connection</div></div>`:''}
+      </div></div>
+    </div>`;
+}
+
+function closeReport() { document.getElementById('report-overlay').classList.remove('open'); }
+function closeReportOnBg(e) { if (e.target === document.getElementById('report-overlay')) closeReport(); }
+
+// ─── TRENDS ───
+function renderTrends() {
+  const labels = allLabels();
+  const el = document.getElementById('trends-content');
+  const bothDone = labels.filter(l => bothComplete(l));
+  if (bothDone.length < 2) {
+    el.innerHTML = `<div class="empty-state"><div class="es-icon">📈</div><h3>Need more data</h3><p>Complete at least two check-ins together to see trends.</p></div>`;
+    return;
+  }
+  const sorted = [...bothDone].sort((a, b) => {
+    const sa = getEntry(a,'sophia')||getEntry(a,'rory');
+    const sb = getEntry(b,'sophia')||getEntry(b,'rory');
+    return new Date(sa&&sa.savedAt||0) - new Date(sb&&sb.savedAt||0);
+  });
+  let html = '';
+  html += `<div class="trend-card"><h3>Connection</h3><div class="bar-chart">${sorted.map(l => {
+    const s = getEntry(l,'sophia'), r = getEntry(l,'rory');
+    return `<div class="bar-group"><div style="display:flex;gap:3px;align-items:flex-end;height:100%;width:100%"><div class="bar" style="background:var(--orange);height:${(s&&s.connection||0)*10}%;flex:1"></div><div class="bar" style="background:var(--cobalt);height:${(r&&r.connection||0)*10}%;flex:1"></div></div><div class="bar-lbl">${l.slice(0,6)}</div></div>`;
+  }).join('')}</div><div class="legend"><div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div>Sophia</div><div class="legend-item"><div class="legend-dot" style="background:var(--cobalt)"></div>Rory</div></div></div>`;
+  html += `<div class="trend-card"><h3>Wellbeing</h3><div class="bar-chart">${sorted.map(l => {
+    const s = getEntry(l,'sophia'), r = getEntry(l,'rory');
+    return `<div class="bar-group"><div style="display:flex;gap:3px;align-items:flex-end;height:100%;width:100%"><div class="bar" style="background:#2B8B8B;height:${(s&&s.wellbeing||0)*10}%;flex:1"></div><div class="bar" style="background:var(--gold);height:${(r&&r.wellbeing||0)*10}%;flex:1"></div></div><div class="bar-lbl">${l.slice(0,6)}</div></div>`;
+  }).join('')}</div><div class="legend"><div class="legend-item"><div class="legend-dot" style="background:#2B8B8B"></div>Sophia</div><div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div>Rory</div></div></div>`;
+  let wg = '<div class="trend-card"><h3>Words</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px">';
+  sorted.forEach(l => {
+    const s = getEntry(l,'sophia'), r = getEntry(l,'rory');
+    wg += `<div style="background:var(--warm);border:1.5px solid var(--rule);border-radius:6px;padding:12px"><div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--orange);text-transform:uppercase;margin-bottom:6px">${l}</div><div style="font-family:'Playfair Display',serif;font-size:14px">${s&&s.word||'—'} <span style="color:var(--muted)">·</span> ${r&&r.word||'—'}</div></div>`;
+  });
+  wg += '</div></div>';
+  html += wg;
+  el.innerHTML = html;
+}
+
+// ─── TOAST ───
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+</script>
+</body>
+</html>
